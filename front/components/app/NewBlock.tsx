@@ -27,16 +27,16 @@ export default function NewBlock({
     name: string;
     description: string;
   }[] = [
-    {
-      type: "llm",
-      typeNames: ["llm"],
-      name: "Large Language Model (LLM)",
-      description: "Query a Large Language Model to complete a prompt for you.",
-    },
+    // {
+    //   type: "llm",
+    //   typeNames: ["llm"],
+    //   name: "Large Language Model (LLM)",
+    //   description: "Query a Large Language Model to complete a prompt for you.",
+    // },
     {
       type: "chat",
       typeNames: ["chat"],
-      name: "Chat-based Large Language Model",
+      name: "Large Language Model",
       description:
         "Query a Large Language Model using a message-based interface.",
     },
