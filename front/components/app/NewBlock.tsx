@@ -28,15 +28,9 @@ export default function NewBlock({
     description: string;
   }[] = [
     {
-      type: "llm",
-      typeNames: ["llm"],
-      name: "Large Language Model Query (LLM)",
-      description: "Query a Large Language Model to complete a prompt for you.",
-    },
-    {
       type: "chat",
       typeNames: ["chat"],
-      name: "Large Language Model Chat (LLM)",
+      name: "Call a Large Language Model (LLM)",
       description:
         "Query a Large Language Model using a message-based interface.",
     },
