@@ -414,7 +414,7 @@ export function Providers({ owner }: { owner: WorkspaceType }) {
       configs[providers[i].providerId] = {
         ...rest,
         api_key: "",
-        redacted_api_key: api_key,
+        redactedApiKey: api_key,
       };
     }
   }
@@ -532,7 +532,7 @@ export function Providers({ owner }: { owner: WorkspaceType }) {
                       <pre>
                         {configs[
                           provider.providerId
-                        ].redacted_api_key}
+                        ].redactedApiKey}
                       </pre>
                     </p>
                   )}
