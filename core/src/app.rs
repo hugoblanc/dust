@@ -3,7 +3,7 @@ use crate::data_sources::qdrant::QdrantClients;
 use crate::databases_store::store::DatabasesStore;
 use crate::dataset::Dataset;
 use crate::project::Project;
-use crate::run::{BlockExecution, BlockStatus, Credentials, Secrets, Run, RunConfig, RunType, Status};
+use crate::run::{BlockExecution, BlockStatus, Credentials, Secret, Run, RunConfig, RunType, Status};
 use crate::stores::store::Store;
 use crate::utils;
 use crate::{DustParser, Rule};
@@ -303,7 +303,7 @@ impl App {
     pub async fn run(
         &mut self,
         credentials: Credentials,
-        secrets: Secrets,
+        secrets: Vec<Value>,
         store: Box<dyn Store + Sync + Send>,
         databases_store: Box<dyn DatabasesStore + Sync + Send>,
         qdrant_clients: QdrantClients,
@@ -351,7 +351,7 @@ impl App {
             databases_store: databases_store.clone(),
             qdrant_clients: qdrant_clients,
             credentials: credentials.clone(),
-            secrets: secrets.clone(),
+            secrets: secrets.into_iter().map(|secret| Secret::try_from(&secret)).collect::<Result<_>>()?,
         }]];
 
         let mut current_map: Option<String> = None;

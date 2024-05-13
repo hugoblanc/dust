@@ -27,7 +27,48 @@ pub struct ExecutionWithTimestamp {
 
 pub type Credentials = HashMap<String, String>;
 
-pub type Secrets = HashMap<String, String>;
+// pub type Secrets = HashMap<String, String>;
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Secret {
+  key: String,
+  #[serde(skip_serializing)]
+  value: String,
+}
+
+impl TryFrom<&Value> for Secret {
+  type Error = anyhow::Error;
+
+  fn try_from(value: &Value) -> Result<Self, Self::Error> {
+      let key = value["key"].as_str().unwrap();
+      let value = value["value"].as_str().unwrap();
+      Ok(Secret { key: key.to_string(), value: value.to_string() })
+  }
+}
+
+// impl Secret {
+//   fn new(key: String, value: String) -> Self {
+//       Secret { key, value }
+//   }
+// }
+
+// #[derive(Serialize, Deserialize, Debug)]
+// struct RedactableSecret {
+//     #[serde(skip_serializing_if = "Option::is_none")]
+//     secret: Option<Secret>,
+//     redacted: bool,
+// }
+
+// impl RedactableSecret {
+//   fn new(secret: Secret, redacted: bool) -> Self {
+//       if redacted {
+//           RedactableSecret { secret: None, redacted }
+//       } else {
+//           RedactableSecret { secret: Some(secret), redacted }
+//       }
+//   }
+// }
+
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct RunConfig {

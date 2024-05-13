@@ -46,7 +46,7 @@ use tracing_subscriber::prelude::*;
 /// API State
 
 struct RunManager {
-    pending_apps: Vec<(app::App, run::Credentials, run::Secrets)>,
+    pending_apps: Vec<(app::App, run::Credentials, run::Secret)>,
     pending_runs: Vec<String>,
 }
 
@@ -75,7 +75,7 @@ impl APIState {
         }
     }
 
-    fn run_app(&self, app: app::App, credentials: run::Credentials, secrets: run::Secrets) {
+    fn run_app(&self, app: app::App, credentials: run::Credentials, secrets: run::Secret) {
         let mut run_manager = self.run_manager.lock();
         run_manager.pending_apps.push((app, credentials, secrets));
     }
@@ -101,7 +101,7 @@ impl APIState {
         let mut loop_count = 0;
 
         loop {
-            let apps: Vec<(app::App, run::Credentials, run::Secrets)> = {
+            let apps: Vec<(app::App, run::Credentials, run::Secret)> = {
                 let mut manager = self.run_manager.lock();
                 let apps = manager.pending_apps.drain(..).collect::<Vec<_>>();
                 apps.iter().for_each(|app| {
@@ -559,7 +559,7 @@ struct RunsCreatePayload {
     inputs: Option<Vec<Value>>,
     config: run::RunConfig,
     credentials: run::Credentials,
-    secrets: run::Secrets,
+    secrets: run::Secret,
 }
 
 async fn run_helper(
