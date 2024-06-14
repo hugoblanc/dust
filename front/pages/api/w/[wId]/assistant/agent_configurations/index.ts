@@ -16,7 +16,9 @@ import type * as t from "io-ts";
 import * as reporter from "io-ts-reporters";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { getAgentUsage } from "@app/lib/api/assistant/agent_usage";
+import {
+  getAgentsUsage
+} from "@app/lib/api/assistant/agent_usage";
 import {
   createAgentActionConfiguration,
   createAgentConfiguration,
@@ -116,26 +118,25 @@ async function handler(
         sort,
       });
       if (withUsage === "true") {
-        agentConfigurations = await safeRedisClient(async (redis) => {
-          return Promise.all(
-            agentConfigurations.map(
-              async (
-                agentConfiguration
-              ): Promise<LightAgentConfigurationType> => {
-                return {
-                  ...agentConfiguration,
-                  usage: await getAgentUsage(auth, {
-                    providedRedis: redis,
-                    agentConfiguration,
-                    workspaceId: owner.sId,
-                  }),
-                };
-              }
-            )
-          );
+        const mentionCounts = await safeRedisClient(async (redis) => {
+          return getAgentsUsage({
+            providedRedis: redis,
+            workspaceId: owner.sId,
+          });
         });
+        const usageMap = new Map(
+          mentionCounts.map(({ agentId, count }) => [agentId, count])
+        );
+        agentConfigurations = agentConfigurations.map((agentConfiguration) => ({
+          ...agentConfiguration,
+          usage: {
+            userCount: 0,
+            messageCount: usageMap.get(agentConfiguration.sId) || 0,
+            usersWithAgentInListCount: 0,
+            timePeriodSec: 0,
+          },
+        }));
       }
-
       if (withAuthors === "true") {
         const recentAuthors = await getAgentsRecentAuthors({
           auth,
